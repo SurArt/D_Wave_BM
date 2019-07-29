@@ -36,30 +36,28 @@ def make_w_from_Ising(Ising_dict_biases, Ising_dict_weights, Num_bits): #require
 
 def form_Trace(ro: pd.DataFrame, list_qb):
     """
-    >>> ro = pd.DataFrame({'prob': [0.4, 0.2, 0.2, 0.2], '1': [1, 1, 1, -1], '2': [1, -1, -1, -1], 'a': [1, 1, -1, -1]})
-    >>> list_qb = [('1', '2')]
+    >>> ro = pd.DataFrame({'prob': [0.4, 0.2, 0.2, 0.2], 1: [1, 1, 1, -1], 2: [1, -1, -1, -1], 'a': [1, 1, -1, -1]})
+    >>> list_qb = [(1, 2)]
     >>> round(form_Trace(ro, list_qb)[list_qb[0]], 3)
     0.2
-    >>> list_qb = [('2', 'a')]
+    >>> list_qb = [(2, 'a')]
     >>> round(form_Trace(ro, list_qb)[list_qb[0]], 3)
     0.6
-    >>> list_qb = [('1', '2'), ('2', 'a')]
+    >>> list_qb = [(1, 2), (2, 'a')]
     >>> round(form_Trace(ro, list_qb)[list_qb[0]], 3)
     0.2
     """
-    RO = ro
     Tr = dict()
     sigm_z_x2 = np.array([[1,  0,  0,  0],
                           [0, -1,  0,  0],
                           [0,  0, -1,  0],
                           [0,  0,  0,  1]])
-    list_qb = list(map(lambda x: (str(x[0]), str(x[1])), list_qb))
 
     for k in list_qb:
-        n_00 = RO[(RO[k[0]] == 1) & (RO[k[1]] == 1)]['prob'].sum()
-        n_01 = RO[(RO[k[0]] == 1) & (RO[k[1]] == -1)]['prob'].sum()
-        n_10 = RO[(RO[k[0]] == -1) & (RO[k[1]] == 1)]['prob'].sum()
-        n_11 = RO[(RO[k[0]] == -1) & (RO[k[1]] == -1)]['prob'].sum()
+        n_00 = ro[(ro[k[0]] == 1) & (ro[k[1]] == 1)]['prob'].sum()
+        n_01 = ro[(ro[k[0]] == 1) & (ro[k[1]] == -1)]['prob'].sum()
+        n_10 = ro[(ro[k[0]] == -1) & (ro[k[1]] == 1)]['prob'].sum()
+        n_11 = ro[(ro[k[0]] == -1) & (ro[k[1]] == -1)]['prob'].sum()
         RO_e = np.diag((n_00, n_01, n_10, n_11))
         Tr[k] = np.trace(sigm_z_x2 @ RO_e)
     return Tr

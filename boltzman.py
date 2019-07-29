@@ -12,7 +12,7 @@ class Boltzman:
                  embedding=None, num_reads=100):
         self.weights = weights if weights is not None else {}  # {(i, j): 1}
         self.biases = biases if biases is not None else {}  # {i: 1, j: 2}
-        self.q_in = q_in if q_in is not None else set(self.weights.keys())  # Set explicitly specifying each allowed configuration as a tuple q_in = {(0, 1)}
+        self.q_in = q_in  # Set explicitly specifying each allowed configuration as a tuple q_in = {(0, 1)}
         self.v_in = v_in if v_in is not None else []
         self.v_out = v_out if v_out is not None else []
         self.v_all = v_all if v_all is not None else self.v_in + self.v_out
@@ -20,16 +20,17 @@ class Boltzman:
         if any(v not in self.v_all for v in [*self.v_in, *self.v_out]):
             raise Exception('v_in and v_out must be in v_all')
 
-        for coupling in self.weights:
-            if coupling not in self.q_in and self.weights[coupling] != 0:
-                raise Exception('There is a forbidden coupling')
+        if self.q_in is not None:
+            for coupling in self.weights:
+                if coupling not in self.q_in and self.weights[coupling] != 0:
+                    raise Exception('There is a forbidden coupling')
 
         self.number_in = len(self.v_in)
         self.number_out = len(self.v_out)
         self.number_all = len(self.v_all)
 
         self.embedding = embedding  # None or tuple
-        self.num_reads = 100
+        self.num_reads = num_reads
 
     def run(self, dwave_parameters=None, fixed_var=None, output_qubits=None):
         dwave_parameters = dwave_parameters if dwave_parameters is not None else {}
@@ -57,6 +58,6 @@ class RestrictedBoltzman(Boltzman):
         super().__init__(*args, **kwargs)
         v_hidden = list(filter(lambda x: x not in [*self.v_in, *self.v_all], self.v_all))
 
-        for coupling in self.q_in:
+        for coupling in self.weights:
             if coupling[0] in v_hidden and coupling[1] in v_hidden:
                 raise Exception("It's not a restricted Boltzman machine")
