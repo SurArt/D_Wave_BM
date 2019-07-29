@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 from boltzman import Boltzman, RestrictedBoltzman
+from tools import form_Trace
+
+import pandas as pd
 
 
 def set_schedule():
@@ -14,10 +17,19 @@ def learn(boltzman: Boltzman, dwave_parameters=None):
 
     if isinstance(boltzman, RestrictedBoltzman):
         results = boltzman.run(dwave_parameters)
-        print(results)
+        p_ro = pd.DataFrame(columns=['prob', *results[0]['results'].keys()])
+        for result in results:
+            p_ro = p_ro.append(pd.DataFrame(
+                {'prob': result['occurrences']/100, **result['results']},
+                index=[0]
+            ), ignore_index=True)
+        unclamped_second_term_trace = form_Trace(p_ro, boltzman.weights.keys())
+        print(unclamped_second_term_trace)
     else:
         raise NotImplementedError
 
 if __name__ == '__main__':
-    rbm = RestrictedBoltzman(weights={('0', '1'): -2}, biases={'0': 1, '1': 1}, v_in=['0', '1'])
+    rbm = RestrictedBoltzman(weights={(0, 1): -2, (0, 2): 0, (1, 2): 0}, biases={0: 1, 1: 1, 2: -1},
+                             v_in=[0, 2])
+    rbm.num_reads = 5000
     learn(rbm)
