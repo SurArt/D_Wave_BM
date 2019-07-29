@@ -2,13 +2,13 @@ import numpy as np
 import pandas as pd
 
 
-# def make_aver_sigm_v(w, vis_val): #w - QUBO array, pat - vector wint shape (N,1)
+# def make_aver_sigm_v(w, vis_val): #w - QUBO array, vis_val - vector wint shape (N,1)
 #     n = len(w)
 #     if n > len(vis_val):
 #         vector = np.zeros(n).reshape(n,1)
 #         vector[:n - 1] = vis_val
 #     else:
-#         vector = pat
+#         vector = vis_val
 #     return np.tanh(np.array(w) @ np.array(vector) + np.diag(w) @ (1 - np.array(vector))) # tanh((w - diag(w))*vect +diag(w)*vect(1, 1, ..., 1))
 
 
