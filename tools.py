@@ -34,17 +34,30 @@ def make_w_from_Ising(Ising_dict_biases, Ising_dict_weights, Num_bits): #require
     return w
 
 
-def form_Trace(ro: pd.DataFrame, list_qb):
+def get_trace_of_first_term(ro: pd.DataFrame, list_sig):
+    """
+    >>> ro = pd.DataFrame({'prob': [0.4, 0.2, 0.2, 0.2], 1: [1, 1, 1, -1], 2: [1, -1, -1, -1], 'a': [1, 1, -1, -1]})
+    >>> list_sig = ['a']
+    >>> round(get_trace_of_first_term(ro, list_sig)[list_sig[0]], 3)
+    0.2
+    """
+    return {
+        it: ro[ro[it] == 1]['prob'].sum() - ro[ro[it] == -1]['prob'].sum()
+        for it in list_sig
+    }
+
+
+def get_trace_of_second_term(ro: pd.DataFrame, list_qb):
     """
     >>> ro = pd.DataFrame({'prob': [0.4, 0.2, 0.2, 0.2], 1: [1, 1, 1, -1], 2: [1, -1, -1, -1], 'a': [1, 1, -1, -1]})
     >>> list_qb = [(1, 2)]
-    >>> round(form_Trace(ro, list_qb)[list_qb[0]], 3)
+    >>> round(get_trace_of_second_term(ro, list_qb)[list_qb[0]], 3)
     0.2
     >>> list_qb = [(2, 'a')]
-    >>> round(form_Trace(ro, list_qb)[list_qb[0]], 3)
+    >>> round(get_trace_of_second_term(ro, list_qb)[list_qb[0]], 3)
     0.6
     >>> list_qb = [(1, 2), (2, 'a')]
-    >>> round(form_Trace(ro, list_qb)[list_qb[0]], 3)
+    >>> round(get_trace_of_second_term(ro, list_qb)[list_qb[0]], 3)
     0.2
     """
     Tr = dict()

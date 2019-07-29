@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from boltzman import Boltzman, RestrictedBoltzman
-from tools import form_Trace
+from tools import get_trace_of_second_term, get_trace_of_first_term
 
 import pandas as pd
 
@@ -23,8 +23,9 @@ def learn(boltzman: Boltzman, dwave_parameters=None):
                 {'prob': result['occurrences']/100, **result['results']},
                 index=[0]
             ), ignore_index=True)
-        unclamped_second_term_trace = form_Trace(p_ro, boltzman.weights.keys())
-        print(unclamped_second_term_trace)
+        unclamped_first_term_trace = get_trace_of_first_term(p_ro, boltzman.v_all)
+        unclamped_second_term_trace = get_trace_of_second_term(p_ro, boltzman.weights.keys())
+
     else:
         raise NotImplementedError
 

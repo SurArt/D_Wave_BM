@@ -10,7 +10,7 @@ from config import TOKEN, ENDPOINT, SOLVER
 
 class Boltzman:
     def __init__(self, weights=None, biases=None, v_in=None, v_out=None, v_all=None,
-                 embedding=None, num_reads=100, sampler=None):
+                 embedding=None, num_reads=100, sampler=None, gradient_velocity=0.1):
         self.weights = weights if weights is not None else {}  # {(i, j): 1}
         self.biases = biases if biases is not None else {}  # {i: 1, j: 2}
 
@@ -28,6 +28,7 @@ class Boltzman:
         self.embedding = embedding  # None or tuple
         self.num_reads = num_reads
         self.sampler = sampler if sampler is not None else SimulatedAnnealingSampler()
+        self.gradient_velocity = gradient_velocity
 
         if isinstance(self.sampler, Structured):
             if self.embedding is None:
