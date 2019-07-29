@@ -2,18 +2,25 @@ import numpy as np
 import pandas as pd
 
 
-# def make_aver_sigm_v(w, vis_val): #w - QUBO array, vis_val - vector wint shape (N,1)
-#     n = len(w)
-#     if n > len(vis_val):
-#         vector = np.zeros(n).reshape(n,1)
-#         vector[:n - 1] = vis_val
-#     else:
-#         vector = vis_val
-#     return np.tanh(np.array(w) @ np.array(vector) + np.diag(w) @ (1 - np.array(vector))) # tanh((w - diag(w))*vect +diag(w)*vect(1, 1, ..., 1))
+def make_aver_sigm_v(w, vis_val): #w - array with Ising coeff. , vis_val - vector wint shape (N,1)
+    n = len(w)
+    if(n > len(vis_val)):
+        vector = np.zeros(n).reshape(n,1)
+        vector[:n - 1] = vis_val
+    else:
+        vector = vis_val
+    return np.tanh(np.array(w) @ np.array(vector) + np.diag(w) @ (1 - np.array(vector))) # tanh((w - diag(w))*vect +diag(w)*vect(1, 1, ..., 1))
 
+def make_aver_sigm_v_respect_to_prob(w, vis_val_matrix, P): #w(dim_syst, dim_syst) - array with Ising coeff, vis_val_matrix(dim_syst, 25435) - array with columns aver_sigm_v, P(25435, 1) - vector with probability of data sets
+    return np.tanh(np.array(w) @ np.array(vis_val_matrix) + np.diag(np.diag(w)) @ (1 - np.array(vis_val_matrix))) @ P
 
-# def make_aver_sigm_v_respect_to_prob(w, vis_val_matrix, P): #w(dim_syst, dim_syst) - QUBO array, vis_val_matrix(dim_syst, 25435) - array with columns aver_sigm_v, P(25435, 1) - vector with probability of data sets
-#     return np.tanh(np.array(w) @ np.array(vis_val_matrix) + np.diag(np.diag(w)) @ (1 - np.array(vis_val_matrix))) @ P
+def make_w_from_Ising(Ising_dict_biases, Ising_dict_weights, Num_bits): #required binary quadratic model with numeric variables
+    w = np.zeros((Num_bits, Num_bits))
+    for weights in Ising_dict_weights:
+        w[weights[0]][weights[1]] = Ising_dict_weights[weights]
+    for bias in Ising_dict_biases:
+        w[bias][bias] = Ising_dict_biases[bias]
+    return w
 
 
 def form_Trace(ro: pd.DataFrame, list_qb):
