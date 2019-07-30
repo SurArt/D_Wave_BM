@@ -10,7 +10,6 @@ DATA_DIRECTORY = 'data'
 
 
 def make_RBM_topology(num_in, num_vis):  #10, 187
-
     RBM =[]
     for i in range(num_in):
         for j in range(num_in,num_vis+num_in):

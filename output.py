@@ -1,14 +1,21 @@
+from tqdm import tqdm
+
+
 def squeeze_same_results(results):
+    # TODO sorting may be invalid
+    sorted_results = list(sorted(results, key=lambda x: list(x['results'].values())))
     squeezed_results = [results[0]]
-    for item in results[1:]:
-        for squeezed_item in squeezed_results:
-            if item['results'] == squeezed_item['results']:
-                if item['min_energy'] < squeezed_item['min_energy']:
-                    squeezed_item['min_energy'] = item['min_energy']
-                    squeezed_item['occurrences'] = item['occurrences']
-                elif item['min_energy'] == squeezed_item['min_energy']:
-                    squeezed_item['occurrences'] += item['occurrences']
-                break
+    for item in sorted_results[1:]:
+        squeezed_item = squeezed_results[-1]
+        if list(item['results'].keys()) != list(squeezed_item['results'].keys()):
+            raise Exception
+
+        if item['results'] == squeezed_item['results']:
+            if item['min_energy'] < squeezed_item['min_energy']:
+                squeezed_item['min_energy'] = item['min_energy']
+                squeezed_item['occurrences'] = item['occurrences']
+            elif item['min_energy'] == squeezed_item['min_energy']:
+                squeezed_item['occurrences'] += item['occurrences']
         else:
             squeezed_results.append(item)
     return squeezed_results
