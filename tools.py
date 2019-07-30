@@ -1,6 +1,17 @@
 import numpy as np
 import pandas as pd
+from minorminer import find_embedding
 
+def make_RBM_topology(num_in, num_vis):  #10, 187
+
+    RBM =[]
+    for i in range(num_in):
+        for j in range(num_in,num_vis+num_in):
+            RBM.append((i,j))
+           
+    solver = DWaveSampler()
+    qbits = solver.edgelist
+    return find_embedding(RBM, qbits)        
 
 def make_aver_sigm_v(w, vis_val): #w - array with Ising coeff. , vis_val - vector wint shape (N,1)
     n = len(w)
