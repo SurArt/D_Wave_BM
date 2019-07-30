@@ -31,7 +31,12 @@ def make_aver_sigm_v(w, vis_val): #w - array with Ising coeff. , vis_val - vecto
 
 
 def make_aver_sigm_v_respect_to_prob(w, vis_val_matrix, P): #w(dim_syst, dim_syst) - array with Ising coeff, vis_val_matrix(dim_syst, 25435) - array with columns aver_sigm_v, P(25435, 1) - vector with probability of data sets
-    return np.tanh(np.array(w) @ np.array(vis_val_matrix) + np.diag(np.diag(w)) @ (1 - np.array(vis_val_matrix))) @ P
+    diag_w = np.diag(np.diag(w))
+    if w.shape[0] > w.shape[1]:
+        diag_w = np.append(diag_w, np.zeros((w.shape[0] - w.shape[1], w.shape[1])), axis=0)
+    elif w.shape[0] < w.shape[1]:
+        raise NotImplementedError
+    return np.tanh(np.array(w) @ np.array(vis_val_matrix) + diag_w @ (1 - np.array(vis_val_matrix))) @ P
 
 
 def make_w_from_Ising(Ising_dict_biases, Ising_dict_weights, Num_bits): #required binary quadratic model with numeric variables
