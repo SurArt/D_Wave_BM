@@ -13,7 +13,7 @@ def set_schedule():
     return
 
 
-def learn(boltzman: Boltzman, dwave_parameters=None):
+def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None):
     dwave_parameters = dwave_parameters if dwave_parameters is not None else {}
     if 'anneal_schedule' not in dwave_parameters and set_schedule() is not None:
         dwave_parameters['anneal_schedule'] = set_schedule()
@@ -26,8 +26,15 @@ def learn(boltzman: Boltzman, dwave_parameters=None):
     vis_val_matrix = np.transpose(data.drop('prob', 1).values)
 
     if isinstance(boltzman, RestrictedBoltzman):
+        max_delta = 1000
+        steps = 0
         while max_delta > 0.1:
             max_delta = 0
+            steps += 1
+            if num_steps is not None:
+                print(f"Iteration number: {steps}")
+            if num_steps is not None and steps > num_steps:
+                break
 
             results = boltzman.run(dwave_parameters)
             p_ro = pd.DataFrame(columns=['prob', *results[0]['results'].keys()])
@@ -88,6 +95,6 @@ if __name__ == '__main__':
     #     weights={(0, 1): -2, (0, 2): 0, (1, 2): 0}, biases={0: 1, 1: 1, 2: -1},
     #                          v_in=[0, 2], v_all=[0, 1, 2])
     rbm.num_reads = 5000
-    learn(rbm)
+    learn(rbm, num_steps=2)
     print(rbm.biases)
 
