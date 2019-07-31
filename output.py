@@ -1,6 +1,3 @@
-from tqdm import tqdm
-
-
 def squeeze_same_results(results):
     # TODO sorting may be invalid
     sorted_results = list(sorted(results, key=lambda x: list(x['results'].values())))

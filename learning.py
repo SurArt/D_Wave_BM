@@ -64,7 +64,7 @@ def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None):
                         continue
                     clamped_first_term = make_aver_sigm_v_respect_to_prob(
                         w[:, :boltzman.number_in + boltzman.number_out],
-                        vis_val_matrix, vis_val_matrix[k1, :]*prob
+                        vis_val_matrix, vis_val_matrix[k1, :].reshape((vis_val_matrix.shape[1], 1))*prob
                     )
                     delta = (clamped_first_term[k2] - unclamped_second_term_trace[coupling])[0]
                     boltzman.weights[coupling] += boltzman.gradient_velocity*delta
