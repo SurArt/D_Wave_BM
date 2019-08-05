@@ -8,6 +8,69 @@ from dwave.system.samplers import DWaveSampler
 
 DATA_DIRECTORY = 'data'
 
+# def get_prob(d: dict(), search_value_i, search_value_j, i, j): # search_value takes value 1 or -1; (i,j) - list of qbits
+#     prob = 0
+#     for key, values in d.items():
+#         if((values[i] == search_value_i) & (values[j] == search_value_j)):
+#             prob += d['prob'][int(key)]
+#     return prob
+        
+
+
+# def get_trace_of_second_term(ro: dict(), list_qb): 
+# #ro = dict(0: [1, 1, -1, 1], 1: [1, -1, 1, 1], 2:[1, 1, 1, 1], 'prob': [0.2, 0.3, 0.5]),  
+# #ro[i] is i result of computing with probability ro['prob'][i]    
+
+#     """
+#     >>> ro = {0: [1, 1, -1, 1], 1: [1, -1, 1, 1], 2:[1, 1, 1, 1], 'prob': [0.2, 0.3, 0.5]}
+#     >>> list_qb = [(1, 2), (0, 2)]
+#     >>> list_sig = (0, 1)
+#     >>> get_trace_of_second_term(ro, list_qb)
+#     {(1, 2): 0.0, (0, 2): 0.6000000000000001}
+#     """
+    
+
+#     Tr = dict()
+#     sigm_z_x2 = np.array([[1,  0,  0,  0],
+#                           [0, -1,  0,  0],
+#                           [0,  0, -1,  0],
+#                           [0,  0,  0,  1]])
+
+#     for k in list_qb:
+#         n_00 = get_prob(ro, 1, 1, k[0], k[1])
+#         n_01 = get_prob(ro, 1, -1, k[0], k[1])
+#         n_10 = get_prob(ro, -1, 1, k[0], k[1])
+#         n_11 = get_prob(ro, -1, -1, k[0], k[1])
+#         RO_e = np.diag((n_00, n_01, n_10, n_11))
+#         Tr[k] = np.trace(sigm_z_x2 @ RO_e)
+#     return Tr
+
+
+# def get_trace_of_first_term(ro: dict(), list_sig, num_qbits):
+# #ro = dict(0: [1, 1, -1, 1], 1: [1, -1, 1, 1], 2:[1, 1, 1, 1], 'prob': [0.2, 0.3, 0.5]),  
+# #ro[i] is i result of computing with probability ro['prob'][i] 
+
+#     """
+#     >>> ro = {0: [1, 1, -1, 1], 1: [1, -1, 1, 1], 2:[1, 1, 1, 1], 'prob': [0.2, 0.3, 0.5]}
+#     >>> list_qb = [(1, 2), (0, 2)]
+#     >>> list_sig = (0, 1)
+#     >>> get_trace_of_second_term(ro, list_qb, 4)
+#     {0: 1.0, 1: 0.4, 2: 0.6, 3: 1.0}
+#     """
+
+
+
+#     res = dict()
+#     x = 0
+#     for i in range(num_qbits):
+#         for key, values in ro.items():
+#             if(key != 'prob'):
+#                 x += ro['prob'][key] * values[i]
+#         res[i] = x
+#         x = 0
+
+#     return res
+
 
 def make_RBM_topology(num_in, num_vis):  #10, 187
     RBM =[]
