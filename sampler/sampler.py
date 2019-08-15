@@ -44,6 +44,7 @@ for i in tqdm(range(NUMBER_TICKS, len(data))):
         }, ignore_index=True)
     else:
         patterns.at[patterns[match].index[0], 'prob'] += 1
+patterns = patterns['prob'] / sum(patterns['prob'])
 
 # one hot encoding
 for i in range(NUMBER_TICKS):

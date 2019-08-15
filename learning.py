@@ -38,13 +38,16 @@ def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
                 break
 
             results = boltzman.run(dwave_parameters)
-            p_ro = pd.DataFrame(columns=data.columns)
+            p_ro = pd.DataFrame()
             for result in results:
                 p_ro = p_ro.append(pd.DataFrame(
                     {'prob': result['occurrences']/100, **result['results']},
                     index=[0]
-                ), ignore_index=True)
-            p_ro.to_csv(rho_distribution_file)
+                ), ignore_index=True, sort=False)
+            p_ro.rename(columns={
+                i: item
+                for i, item in enumerate(data.drop(columns='prob').columns)
+            }).to_csv(rho_distribution_file, index=False)
             unclamped_first_term_trace = get_trace_of_first_term(p_ro, boltzman.v_all)
             unclamped_second_term_trace = get_trace_of_second_term(p_ro, boltzman.weights.keys())
             w = make_w_from_Ising(boltzman.biases, boltzman.weights, boltzman.number_all)
