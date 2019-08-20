@@ -3,6 +3,7 @@
 from boltzman import Boltzman, RestrictedBoltzman
 from tools import get_trace_of_second_term, get_trace_of_first_term
 from tools import make_aver_sigm_v_respect_to_prob, make_w_from_Ising, DATA_DIRECTORY
+from accuracy import accuracy
 
 import pandas as pd
 import os
@@ -32,8 +33,7 @@ def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
         while max_delta > 0.1:
             max_delta = 0
             steps += 1
-            if num_steps is not None:
-                print(f"Iteration number: {steps}")
+            print(f"Iteration number: {steps}. ", end='')
             if num_steps is not None and steps > num_steps:
                 break
 
@@ -74,6 +74,7 @@ def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
                     delta = (clamped_first_term[k2] - unclamped_second_term_trace[coupling])[0]
                     boltzman.weights[coupling] += boltzman.gradient_velocity*delta
                     max_delta = max(max_delta, abs(delta))
+            print(f"Current accuracy: {accuracy(boltzman, data)}")
         return boltzman
     else:
         raise NotImplementedError

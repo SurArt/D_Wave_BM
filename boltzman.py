@@ -7,6 +7,8 @@ from dimod import SimulatedAnnealingSampler, Structured
 from output import get_response
 from config import TOKEN, ENDPOINT, SOLVER
 
+from math import exp
+
 
 class Boltzman:
     def __init__(self, weights=None, biases=None, v_in=None, v_out=None, v_all=None,
@@ -24,6 +26,7 @@ class Boltzman:
         self.number_in = len(self.v_in)
         self.number_out = len(self.v_out)
         self.number_all = len(self.v_all)
+        self.number_vis = self.number_in + self.number_out
 
         self.embedding = embedding  # None or tuple
         self.num_reads = num_reads
@@ -48,6 +51,21 @@ class Boltzman:
 
         response_bm = self.sampler.sample(BQM_weights, **dwave_parameters)
         return get_response(response_bm, qubits=output_qubits)
+
+    def get_prob(self, spins: list, partition_function=1):
+        prob = 0
+        for i in range(len(self.biases)):
+            prob += spins[i] * self.biases.get(i, 0)
+
+        for i in range(len(self.weights)):
+            for j in range(i + 1, len(self.weights)):
+                if (i, j) in self.weights:
+                    prob += spins[i] * spins[j] * self.weights[(i, j)]
+                elif (j, i) in self.weights:
+                    prob += spins[i] * spins[j] * self.weights[(j, i)]
+
+        return exp(-prob)/partition_function
+
 
 
 class RestrictedBoltzman(Boltzman):
