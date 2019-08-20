@@ -9,16 +9,19 @@ import pandas as pd
 import os
 import numpy as np
 
+from tqdm import tqdm
 
-def set_schedule():
-    return
+
+def set_schedule(anneal_time=100):
+    return [(0, 0), (0.9, anneal_time/2), (1, anneal_time)]
+
 
 
 def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
           rho_distribution_file='rho_distribution.csv'):
     dwave_parameters = dwave_parameters if dwave_parameters is not None else {}
     if 'anneal_schedule' not in dwave_parameters and set_schedule() is not None:
-        dwave_parameters['anneal_schedule'] = set_schedule()
+        dwave_parameters['anneal_schedule'] = set_schedule(1000)
 
     data = pd.read_csv(os.path.join(DATA_DIRECTORY, 'bits_with_prob.csv'), header=0, sep=';')
     prob = data['prob'].values
