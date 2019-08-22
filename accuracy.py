@@ -2,7 +2,7 @@
 
 import pandas as pd
 from sampler import NUMBER_TICKS, DISCR_SIZE
-from learning import RestrictedBoltzman
+from boltzman import RestrictedBoltzman
 
 from tqdm import tqdm
 from math import exp, cosh, log
@@ -55,10 +55,10 @@ def accuracy(boltzman: RestrictedBoltzman, data: pd.DataFrame):
             data.at[row.Index, 'exp_prob'] = prob
 
         data['exp_prob'] = data['exp_prob'] / sum(data['exp_prob'])
-        data['kl'] = data.apply(lambda row: row.prob*log(row.prob/row.exp_prob), axis=1)
-        kl = sum(data['kl'])
+        data['log-likelihood'] = data.apply(lambda row: -row.prob*log(row.exp_prob), axis=1)
+        kl = sum(data['log-likelihood'])
 
-        del data['kl']
+        del data['log-likelihood']
         del data['exp_prob']
         return kl
 

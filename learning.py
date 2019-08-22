@@ -16,7 +16,6 @@ def set_schedule(anneal_time=100):
     return [(0, 0), (0.9, anneal_time/2), (1, anneal_time)]
 
 
-
 def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
           rho_distribution_file='rho_distribution.csv'):
     dwave_parameters = dwave_parameters if dwave_parameters is not None else {}
@@ -36,7 +35,7 @@ def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
         while max_delta > 0.1:
             max_delta = 0
             steps += 1
-            print(f"Iteration number: {steps}. ", end='')
+            print(f"Iteration number: {steps}. ")
             if num_steps is not None and steps > num_steps:
                 break
 
@@ -65,15 +64,16 @@ def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
                 max_delta = max(max_delta, abs(delta))
 
             for k1 in range(len(v_in)):
+                clamped_first_term = make_aver_sigm_v_respect_to_prob(
+                    w[:, :boltzman.number_in + boltzman.number_out],
+                    vis_val_matrix,
+                    vis_val_matrix[k1, :].reshape((vis_val_matrix.shape[1], 1)) * prob
+                )
                 for k2 in range(len(v_in), len(v_all)):
                     if (k1, k2) in boltzman.weights or (k2, k1) in boltzman.weights:
                         coupling = (k1, k2) if (k1, k2) in boltzman.weights else (k2, k1)
                     else:
                         continue
-                    clamped_first_term = make_aver_sigm_v_respect_to_prob(
-                        w[:, :boltzman.number_in + boltzman.number_out],
-                        vis_val_matrix, vis_val_matrix[k1, :].reshape((vis_val_matrix.shape[1], 1))*prob
-                    )
                     delta = (clamped_first_term[k2] - unclamped_second_term_trace[coupling])[0]
                     boltzman.weights[coupling] += boltzman.gradient_velocity*delta
                     max_delta = max(max_delta, abs(delta))
