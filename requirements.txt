@@ -1,3 +1,2 @@
-numpy
-pandas
 dwave-ocean-sdk
+pandas
