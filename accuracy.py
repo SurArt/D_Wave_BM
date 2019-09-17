@@ -6,33 +6,6 @@ from boltzman import RestrictedBoltzman
 
 from tqdm import tqdm
 from math import exp, cosh, log
-from itertools import product
-
-
-def reduce_p_ro(p_ro: pd.DataFrame, output_columns, prob_column, quiet=True):
-    new_p_ro = p_ro.drop_duplicates(output_columns)
-    dupclicated_rows = p_ro[p_ro.duplicated(output_columns)]
-    iterator = dupclicated_rows[output_columns + [prob_column]].itertuples()
-    for row in iterator if quiet else tqdm(iterator):
-        pattern = new_p_ro[output_columns[0]] == row[1]
-        for i, item in enumerate(output_columns[1:]):
-            pattern &= new_p_ro[item] == row[i+2]
-        new_p_ro.at[new_p_ro[pattern].index[0], 'prob'] += getattr(row, 'prob')
-
-    return new_p_ro[[prob_column] + output_columns].reset_index(drop=True)
-
-
-def accuracy_ro(p_ro, data: pd.DataFrame):
-    if isinstance(p_ro, str):
-        p_ro = pd.read_csv(p_ro)
-    elif not isinstance(p_ro, pd.DataFrame):
-        raise TypeError
-
-    output_columns = [f"{i}_{j}" for i in range(NUMBER_TICKS) for j in range(DISCR_SIZE)]
-    output_columns.extend([f"weekday_{i}" for i in range(7)])
-    p_ro = reduce_p_ro(p_ro, output_columns, 'prob')
-
-    return p_ro
 
 
 def accuracy(boltzman: RestrictedBoltzman, data: pd.DataFrame):

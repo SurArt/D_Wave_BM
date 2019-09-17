@@ -13,6 +13,17 @@ from math import exp
 class Boltzman:
     def __init__(self, weights=None, biases=None, v_in=None, v_out=None, v_all=None,
                  embedding=None, num_reads=100, sampler=None, gradient_velocity=0.1):
+        """
+        :param weights: dict, связь между битами, например {(0, 1): 2}
+        :param biases: dict, линейный коэффициент, например {0: 1, 1: 1}
+        :param v_in: list, видимые биты, кодирующие вектор признаков
+        :param v_out: list, видимые биты, кодирующие выходное значение
+        :param v_all: list, все биты
+        :param embedding: dict, карта соответствия битов в машине больцмана и кубитов в D-wave
+        :param num_reads: максимальное количество итераций при обучении
+        :param sampler: объект, осуществяющий отжиг, например SimulatedAnnealingSampler()
+        :param gradient_velocity: длина шага для обновления весов
+        """
         self.weights = weights if weights is not None else {}  # {(i, j): 1}
         self.biases = biases if biases is not None else {}  # {i: 1, j: 2}
 
@@ -40,6 +51,12 @@ class Boltzman:
                 self.sampler = FixedEmbeddingComposite(self.sampler, self.embedding)
 
     def run(self, dwave_parameters=None, fixed_var=None, output_qubits=None):
+        """
+        :param dwave_parameters: dict, parameters for sampler
+        :param fixed_var: dict, переменные, для которых известны значения
+        :param output_qubits:
+        :return: [{'energy': energy, 'results': {0: 1, 2: -1, ...}, 'occurrences': ...}, ...]
+        """
         dwave_parameters = dwave_parameters if dwave_parameters is not None else {}
         fixed_var = fixed_var if fixed_var is not None else {}
         if 'num_reads' not in dwave_parameters:
@@ -67,8 +84,10 @@ class Boltzman:
         return exp(-prob)/partition_function
 
 
-
 class RestrictedBoltzman(Boltzman):
+    """
+    Машина больцмана, в котором биты из скрытого слоя не имеют связей
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         v_hidden = list(filter(lambda x: x not in [*self.v_in, *self.v_all], self.v_all))

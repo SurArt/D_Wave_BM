@@ -15,16 +15,8 @@ from tqdm import tqdm
 def set_schedule(anneal_time=100):
     return [(0, 0), (0.9, anneal_time/2), (1, anneal_time)]
 
-def upgrade_coefficients(boltzman, p_ro, vis_val_matrix, prob):
-    """
-    TODO
 
-    :param boltzman:
-    :param p_ro:
-    :param vis_val_matrix:
-    :param prob:
-    :return:
-    """
+def upgrade_coefficients(boltzman, p_ro, vis_val_matrix, prob):
     max_delta = 0
     unclamped_first_term_trace = get_trace_of_first_term(p_ro, boltzman.v_all)
     unclamped_second_term_trace = get_trace_of_second_term(p_ro, boltzman.weights.keys())
@@ -73,7 +65,6 @@ def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
         max_delta = 1000
         steps = 0
         while max_delta > 0.1:
-            max_delta = 0
             steps += 1
             print(f"Iteration number: {steps}. ")
             if num_steps is not None and steps > num_steps:
@@ -95,6 +86,7 @@ def learn(boltzman: Boltzman, dwave_parameters=None, num_steps=None,
         return boltzman
     else:
         raise NotImplementedError
+
 
 if __name__ == '__main__':
     from dwave.system.samplers import DWaveSampler
